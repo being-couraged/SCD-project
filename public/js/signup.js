@@ -1,3 +1,5 @@
+const { ipcRenderer } = require("electron");
+
 let first_name_inp = document.querySelector("form input[name='first-name']"),
 last_name_inp = document.querySelector("form input[name='last-name']"),
 cnic_inp = document.querySelector("form input[name='cnic']"),
@@ -21,10 +23,11 @@ cnic_inp.addEventListener("input", (e) => {
 document.querySelector("form button[type='submit']").addEventListener("click", (e) => {
     if(!first_name_inp.value || !last_name_inp.value || !cnic_inp.value || !username_inp.value || !new_password_inp.value || !confirm_password_inp.value)
         return;
-     
-    console.log("signup Success");
-    location.replace("../../index.html");
-    
+
+    ipcRenderer.send("navigate", "/html/index.html", "navigate-error");
+    ipcRenderer.on("navigate-error", (event, error) => {
+
+    });
     //backend goes here...
 
 });
