@@ -1,0 +1,116 @@
+@font-face {
+    font-family: poppins;
+    src: url("../res/Poppins-Regular.ttf");
+}
+@font-face {
+    font-family: poppins-bold;
+    src: url("../res/Poppins-Bold.ttf");
+}
+
+
+
+body{
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    font-family: poppins;
+    background-color: lightgray;
+}
+
+h1{
+    margin: 0;
+    padding: 0;
+    letter-spacing: 2px;
+    font-size: 50px;
+    font-family: poppins-bold;
+}
+
+
+form{
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    min-width: 280px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.input{
+    position: relative;
+    width: 100%;
+}
+.input input{
+    border: 2px solid gray;
+    outline: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 17px;
+    width: calc(100% - 20px);
+    transition: 0.3s;
+}
+.input span{
+    position: absolute;
+    left: 10px;
+    top: 0;
+    background-color: white;
+    padding: 0px 10px;
+    transform: translateY(-50%);
+    font-size: 17px;
+    color: gray;
+    transition: 0.3s;
+}
+.input input:valid,
+.input input:focus{
+    border-color: green;
+    border-width: 3px;
+}
+.input input:valid ~ span,
+.input input:focus ~ span{
+    color: green;
+    font-family: poppins-bold;  
+}
+
+
+.remember-me{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 17px;
+}
+.remember-me input{
+    width: 20px;
+    height: 20px;    
+}
+
+.controls{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.controls *{
+    width: 100%;
+    text-align: center;
+    background-color: var(--clr);
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 17px;
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+}
+.controls button{
+    font-size: 18px;
+    padding: 12px;
+}
