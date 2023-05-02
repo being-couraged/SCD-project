@@ -10,6 +10,16 @@
 </head>
 <body>
 
+    <div class="toast">
+        <p></p>
+        <span onclick="this.parentElement.style.display='none';"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <div class="loader"><p><span><label></label></span></p></div>
+
+
+
+
+
     <div class="profile">
         <div class="left">
             <img src="../res/user.png" alt="...">
@@ -18,20 +28,7 @@
         <span onclick="logout()"><i class="fa-solid fa-power-off"></i></span>
     </div>
 
-    <div class="contacts">
-
-        <div class="contact" onclick="location.replace('chat-page.html');">
-            <div class="left">
-                <img src="../res/user.png" alt="...">
-                <div>
-                    <p>Humaira Jawed</p>
-                    <p class="last-message">hello</p>
-                </div>
-            </div>
-            <span class="counter">3</span>
-        </div>
-
-    </div>
+    <div class="contacts"></div>
 
 
 

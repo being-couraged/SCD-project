@@ -9,6 +9,15 @@
     <title>Signup Page - Chat Application</title>
 </head>
 <body>
+
+    <div class="toast">
+        <p></p>
+        <span onclick="this.parentElement.style.display='none';"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <div class="loader"><p><span><label></label></span></p></div>
+
+
+
     
     <h1>Signup</h1>
 
@@ -24,13 +33,13 @@
         </div>
 
         <div class="input">
-            <input type="text" name="cnic" required>
-            <span>CNIC</span>
+            <input type="email" name="email" required>
+            <span>E-mail</span>
         </div>
 
         <div class="input">
-            <input type="text" name="username" required>
-            <span>Username</span>
+            <input type="text" name="number" required>
+            <span>Number</span>
         </div>
 
         <div class="input">

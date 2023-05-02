@@ -10,13 +10,22 @@
 </head>
 <body>
     
+    <div class="toast">
+        <p></p>
+        <span onclick="this.parentElement.style.display='none';"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <div class="loader"><p><span><label></label></span></p></div>
+
+
+
+
     <h1>Login</h1>
 
     <form onsubmit="return false" action="#" method="post">
 
         <div class="input">
-            <input type="text" name="username" required>
-            <span>Username</span>
+            <input type="text" name="number" required>
+            <span>Number</span>
         </div>
 
         <div class="input">
@@ -26,7 +35,7 @@
 
         <div class="remember-me">
             <input type="checkbox" name="remember-me">
-            <span>Remember Username</span>
+            <span>Remember Number</span>
         </div>
 
         <div class="controls">
