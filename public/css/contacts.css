@@ -220,6 +220,7 @@ p, h1, h2, h3{
 }
 
 .contacts .contact{
+    text-decoration: none;
     width: calc(100% - 20px);
     display: flex;
     justify-content: space-between;

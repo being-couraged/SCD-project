@@ -39,6 +39,7 @@ let old_number = localStorage.getItem("number");
 if(old_number){
     remember_me_inp.checked=true;
     number_inp.value=old_number;
+    password_inp.focus();
 }
 
 

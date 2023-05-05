@@ -10,33 +10,27 @@
 </head>
 <body>
 
+    <div class="toast">
+        <p></p>
+        <span onclick="this.parentElement.style.display='none';"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <div class="loader"><p><span><label></label></span></p></div>
+
+
+
+
     <div class="profile">
         <a href="./contacts.html"><i class="fa-solid fa-arrow-left"></i></a>
-        <div class="left">
-            <img src="../res/user.png" alt="...">
-            <p class="name">Humaira Jawed</p>
-        </div>
+        <div class="left"></div>
     </div>
 
 
-    <div class="messages">
-
-        <div class="message left">
-            <p class="body">Hello</p>
-            <p class="time">01:24 PM</p>
-        </div>
-
-        <div class="message right">
-            <p class="body">Hello</p>
-            <p class="time">01:24 PM</p>
-        </div>
-
-    </div>
+    <div class="messages"></div>
 
 
     <form class="message-input" method="post" action="#" onsubmit="return false;">
         <textarea rows="3" name="message-body" placeholder="Type Message Here" required></textarea>
-        <button><i class="fa-solid fa-paper-plane"></i></button>
+        <button type="submit" onclick="send_message();"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
 
     

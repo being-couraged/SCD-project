@@ -68,8 +68,7 @@ document.querySelector("form button[type='submit']").addEventListener("click", (
         number: number_inp.value,
         password: new_password_inp.value,
         status: "offline",
-        dp: "",
-        rooms: ""
+        dp: ""
     };
 
     ipcRenderer.send("signup", obj);

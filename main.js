@@ -118,6 +118,24 @@ ipcMain.on("logout", (event, data) => {
 
 
 
+
+onValue(ref(database, "/"), (data) => {
+    if(data && data['users']){
+        let user_data=data['users'];
+        for(i of Object.keys(user_data)){
+            if(user_data[i].number===profile.number){
+                profile=user_data[i];
+                break;
+            }
+        }
+    }
+    window.webContents.send("live-change-detected", profile, data.val());
+});
+
+
+
+
+
 powerMonitor.on("lock-screen", (e) => {
     window.loadFile(process.cwd()+"./public/html/index.html");
 })
