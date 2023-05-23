@@ -30,7 +30,7 @@ body{
     right: 10px;
     top: 10px;
     width: calc(100% - 40px);
-    padding: 0px 10px;
+    padding: 10px;
     display: none;
     justify-content: space-between;
     align-items: center;
@@ -277,4 +277,347 @@ p, h1, h2, h3{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+
+
+
+
+
+
+
+
+.input{
+    position: relative;
+    width: 100%;
+    margin-top: 20px;
+}
+.input input{
+    border: 2px solid gray;
+    outline: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 17px;
+    width: calc(100% - 20px);
+    transition: 0.3s;
+}
+.input span{
+    position: absolute;
+    left: 10px;
+    top: 0;
+    background-color: white;
+    padding: 0px 10px;
+    transform: translateY(-50%);
+    font-size: 17px;
+    color: gray;
+    transition: 0.3s;
+}
+.input input:valid,
+.input input:focus{
+    border-color: green;
+    border-width: 3px;
+}
+.input input:valid ~ span,
+.input input:focus ~ span{
+    color: green;
+    font-family: poppins-bold;  
+}
+
+
+
+
+
+
+
+
+
+
+.dialog{
+    position: fixed;
+    z-index: 9;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+}
+.dialog .profile-dialog{
+    width: 300px;
+    padding: 10px;
+    background-color: #222;
+    display: none;
+    flex-direction: column;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    position: relative;
+}
+.dialog .cancel{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background-color: red;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.dialog .cancel:hover{
+    transform: rotate(180deg);
+}
+.dialog .profile-dialog .img{
+    position: relative;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dialog .profile-dialog .img img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.dialog .profile-dialog .img .file-input{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #222;
+    border-radius: 50%;
+    right: 0;
+    bottom: 0;
+    cursor: pointer;
+    box-shadow: 0px 0px 20px white;
+    overflow: hidden;
+}
+.dialog .profile-dialog .img .file-input input{
+    position: absolute;
+    z-index: 2;
+    scale: 10;
+    opacity: 0;
+    cursor: pointer;
+}
+.dialog .profile-dialog .img span{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #222;
+    border-radius: 50%;
+    right: 0;
+    bottom: 0;
+    cursor: pointer;
+    box-shadow: 0px 0px 20px white;
+}
+.dialog .profile-dialog .img span svg{
+    transition: 0.5s;
+}
+.dialog .profile-dialog .img span:hover svg{
+    scale: 1.3;
+}
+.dialog .profile-dialog .container{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+.dialog .profile-dialog .container div,
+.dialog .profile-dialog .container div{
+    width: calc(100% - 60px);
+}
+.dialog .profile-dialog .container div h2{
+    font-size: 22px;
+    font-family: poppins-bold;
+}
+.dialog .profile-dialog .container div h2,
+.dialog .profile-dialog .container div p{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.dialog .profile-dialog .container input{
+    display: none;
+    width: calc(100% - 20px);
+    padding: 10px;
+    border-radius: 10px;    
+    outline: none;
+    border: none;
+    font-family: poppins;
+    font-size: 17px;
+}
+.dialog .profile-dialog .container.edit h2,
+.dialog .profile-dialog .container.edit p{
+    display: none;
+}
+.dialog .profile-dialog .container.edit input{
+    display: block;
+}
+.dialog .profile-dialog .container span.edit{
+    display: flex;
+}
+.dialog .profile-dialog .container span.save{
+    display: none !important;  
+}
+.dialog .profile-dialog .container.edit span.edit{
+    display: none;
+}
+.dialog .profile-dialog .container.edit span.save{
+    display: flex !important;
+}
+.dialog .profile-dialog .container span.edit{
+    width: 50px;
+    height: 50px;
+    box-shadow: 0px 0px 10px white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+.dialog .profile-dialog button.password{
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background-color: #222;
+    box-shadow: 0px 0px 10px black;
+    color: white;
+    font-size: 20px;
+    margin-top: 20px;
+    transition: 0.5s;
+    cursor: pointer;
+}
+.dialog .profile-dialog button.password:hover{
+    background-color: white;
+    color: black;
+}
+.dialog .profile-dialog button.delete-profile{
+    margin: 20px 0px;
+    padding: 10px;
+    width: 80%;
+    font-size: 20px;
+    color: red;
+    background-color: #222;
+    outline: none;
+    border: 1px solid red;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.dialog .profile-dialog button.delete-profile:hover{
+    background-color: red;
+    color: white;
+}
+
+
+
+
+
+
+
+
+
+.profile-deletion-dialog{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 10px;
+    width: 300px;
+    padding: 10px;
+    background-color: #222;
+    color: white;
+    position: relative;
+}
+.profile-deletion-dialog h1{
+    font-size: 22px;
+    margin: 10px 0px;
+}
+.profile-deletion-dialog p{
+    width: 80%;
+    text-align: center;
+    font-size: 17px;
+}
+.controls{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+.controls button{
+    background-color: var(--clr);
+    outline: none;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 17px;
+    width: 100%;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+.change-password-dialog{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 10px;
+    width: 300px;
+    background-color: white;
+    color: #222;
+    padding: 10px;
+    position: relative;
+}
+.change-password-dialog span.cancel{
+    color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+@media(max-width:400px){
+    .dialog .cancel{
+        top: -50px !important;
+        left: calc(50% - 25px);
+    }
 }

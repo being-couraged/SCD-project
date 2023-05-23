@@ -32,6 +32,89 @@
 
 
 
+
+
+
+
+    <div class="dialog">
+
+        <div class="profile-dialog">
+            <span class="cancel" onclick="hide_dialog(this.parentElement);"><i class="fa-solid fa-xmark"></i></span>
+            <h1>Profile</h1>
+
+            <div class="img">
+                <img src="" alt="...">
+                <div class="file-input">
+                    <input type="file" name="dp-image" onchange="preview_image(this.parentElement.parentElement);">
+                    <span><i class="fa-solid fa-edit"></i></span>
+                </div>
+            </div>
+
+            <div class="container first-name">
+                <div>
+                    <h2>Humaira Javed</h2>
+                    <input type="text" name="first-name" placeholder="First Name">
+                </div>
+                <span class="edit" onclick="this.parentElement.classList.toggle('edit');"><i class="fa-solid fa-edit"></i></span>
+                <span class="edit save" onclick="update_profile_elem(this.parentElement);"><i class="fa-solid fa-floppy-disk"></i></span>
+            </div>
+
+            <div class="container last-name">
+                <div>
+                    <h2>Humaira Javed</h2>
+                    <input type="text" name="last-name" placeholder="Last Name">
+                </div>
+                <span class="edit" onclick="this.parentElement.classList.toggle('edit');"><i class="fa-solid fa-edit"></i></span>
+                <span class="edit save" onclick="update_profile_elem(this.parentElement);"><i class="fa-solid fa-floppy-disk"></i></span>
+            </div>
+
+            <div class="container number">
+                <div>
+                    <p></p>
+                </div>
+            </div>
+
+            <button class="password" onclick="hide_dialog(this.parentElement);show_dialog('change-password-dialog');">Change Password</button>
+            <button class="delete-profile" onclick="hide_dialog(this.parentElement);show_dialog('profile-deletion-dialog');">Delete Profile</button>
+        </div>
+
+
+        <div class="change-password-dialog">
+            <span class="cancel" onclick="hide_dialog(this.parentElement);"><i class="fa-solid fa-xmark"></i></span>
+            <h2>Change Password</h2>
+
+            <div class="input">
+                <input type="password" name="new-password" required>
+                <span>New Password</span>
+            </div>
+            <div class="input">
+                <input type="password" name="confirm-password" required>
+                <span>Confirm Password</span>
+            </div>
+
+            <div class="controls">
+                <button style="--clr: gray;" onclick="hide_dialog(this.parentElement.parentElement);">Cancel</button>
+                <button style="--clr: green;" onclick="update_password(this.parentElement.parentElement);">Update</button>
+            </div>
+        </div>
+
+
+        <div class="profile-deletion-dialog">
+            <span class="cancel" onclick="hide_dialog(this.parentElement);"><i class="fa-solid fa-xmark"></i></span>
+            <h1>Confirmation Dialog</h1>
+            <p>Are you want to delete your profile?</p>
+            <div class="controls">
+                <button style="--clr: gray;" onclick="hide_dialog(this.parentElement.parentElement);">Cancel</button>
+                <button style="--clr: red;" onclick="delete_profile();">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
     <script src="../js/all.js"></script>    
     <script src="../js/contacts.js"></script>    
 

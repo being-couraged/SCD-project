@@ -1,6 +1,9 @@
 const {BrowserWindow, app, ipcMain, screen, powerMonitor} = require("electron");
-const {initializeApp} = require("firebase/app");
+const firebase = require("firebase/app");
+const fs = require("fs");
 const {getDatabase, ref, get, set, remove, onValue} = require("firebase/database");
+const {getStorage, uploadBytesResumable} = require("firebase/storage");
+const admin = require("firebase-admin");
 
 const firebaseConfig = {
     apiKey: "AIzaSyBid7q71uob_88zzI6mzb8AHhpNzgz7sXo",
@@ -35,8 +38,9 @@ app.on("ready", mainWindow);
 
 
 
-let firebaseApp = initializeApp(firebaseConfig)
+let firebaseApp = firebase.initializeApp(firebaseConfig);
 let database = getDatabase(firebaseApp);
+let storage = getStorage(firebaseApp);
 let profile=null;
 
 
@@ -69,6 +73,25 @@ ipcMain.on("delete", (event, path, sendBackListener) => {
             event.reply(sendBackListener, false);
         });
     }
+});
+ipcMain.on("upload-image", (event, img_name, path, file, sendBackListener) => {
+    let data = fs.readFileSync(file, "utf8");
+    let new_data = Uint8Array.from(data);
+    
+    event.reply(sendBackListener, false);
+    
+    // uploadBytesResumable(ref(storage, `${img_name}`), new_data).on("state_changed", (snaps) => {
+    //     let percentage = Math.floor((snaps.bytesTransferred/snaps.totalBytes)*100);
+    //     event.reply(sendBackListener, percentage);
+    // }, (error) => {
+    //     event.reply(sendBackListener, false);
+    // }, () => {
+    //     set(ref(database, path), img_name).then((res) => {
+    //         event.reply(sendBackListener, true);
+    //     }).catch((e) => {
+    //         event.reply(sendBackListener, false);
+    //     });
+    // });
 });
 
 
@@ -128,8 +151,8 @@ onValue(ref(database, "/"), (data) => {
                 break;
             }
         }
+        window.webContents.send("live-change-detected", profile, data.val());
     }
-    window.webContents.send("live-change-detected", profile, data.val());
 });
 
 

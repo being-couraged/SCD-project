@@ -68,6 +68,113 @@ const open_contact = (number) => {
         window.location.replace("../html/chat-page.html");
     }
 }
+const show_dialog = (dialog_class) => {
+    let dialog = document.querySelector(`.dialog .${dialog_class}`);
+    dialog.querySelectorAll("input").forEach((elem) => {
+        elem.value="";
+    });
+    dialog.style.display="flex";
+    dialog.parentElement.style.display="flex";
+}
+const hide_dialog = (dialog) => {
+    dialog.style.display="none";
+    dialog.parentElement.style.display="none";
+}
+const delete_profile = () => {
+    show_loader();
+    ipcRenderer.send("delete", `users/${profile.number}`, "profile-deleted");
+    ipcRenderer.on("profile-deleted", (event, res) => {
+        if(res){
+            window.location.replace("../html/index.html");
+        }else{
+            hide_loader();
+            show_toast("Cannot delete profile. Try Again", true);
+        }
+    });
+}
+const update_profile_elem = (elem) => {
+    show_loader()
+    let data = elem.querySelector("input").value,
+    data_name = elem.querySelector("input").name;
+    let data_name_cpy=data_name;
+    data_name="";
+    for(i of data_name_cpy){
+        if(i==='-'){
+            data_name+="_";
+        }else{
+            data_name+=i;
+        }
+    }
+    ipcRenderer.send("insert", `users/${profile.number}/${data_name}/`, data, "profile-updated-status");
+    ipcRenderer.on("profile-updated-status", (event, res) => {
+        if(res){
+            elem.classList.toggle("edit");
+            elem.querySelector("div h2, div p").innerHTML=data;
+            hide_loader();
+            show_toast("Profile Updated Successfully");
+        }else{
+            hide_loader();
+            show_toast("Profile Cannot Updated", true);
+        }
+    });
+}
+const update_password = (dialog) => {
+    show_loader();
+    let new_password = dialog.querySelector("input[name='new-password']").value,
+    confirm_password = dialog.querySelector("input[name='confirm-password']").value;
+
+    if(new_password!==confirm_password){
+        hide_loader();
+        show_toast("New and Confirm password not matched", true);
+        return;
+    }
+
+    ipcRenderer.send("insert", `users/${profile.number}/password`, new_password, "pasword-updated-info");
+    ipcRenderer.on("pasword-updated-info", (event, res) => {
+        if(res){
+            hide_loader();
+            show_toast("Password Updated Successfully");
+            hide_dialog(dialog);
+        }else{
+            hide_loader();
+            show_toast("Password cannot updated. Please try again.", true);
+        }
+    }); 
+
+}
+const preview_image = (elem) => {
+    show_loader();
+    let image_elem = elem.querySelector("img"),
+    file = elem.querySelector("input[name='dp-image']").files[0];
+    file_ext = file.name.split(".").pop();
+    let default_extensions = ["png", "jpg", "jpeg"];
+    let matched=false;
+    for(i of default_extensions){
+        if(i.toLowerCase()===file_ext.toLowerCase()){
+            matched=true;
+            break;
+        }
+    }
+    if(!matched){
+        hide_loader();
+        show_toast("Please Upload Image (PNG, JPG or JPEG) only", true);
+        return;
+    }
+    image_elem.src=window.URL.createObjectURL(file);
+    let name = "/"+Date.now();
+    ipcRenderer.send("upload-image", name, `users/${profile.number}/dp`, file.path, "image_uploaded_info");
+    ipcRenderer.on("image_uploaded_info", (event, res) => {
+        if(typeof(res) === typeof(true)){
+            hide_loader();
+            if(res)
+                show_toast("Uploaded Successfully");
+            else
+                show_toast("Cannot Uploaded. Try Again", true);
+        }else{
+            console.log(res);
+        }
+    });
+}
 
 const populate_users = () => {
     let contacts_elem = document.querySelector(".contacts");
@@ -106,6 +213,31 @@ ipcRenderer.on("first-fetch-result", (event, isError, _profile, data) => {
         hide_loader();
     }
 });
+
+
+
+
+
+
+
+
+document.querySelector(".profile .left").addEventListener("click", (e) => {
+    document.querySelector(".profile-dialog .img img").src="../res/user.png";
+    
+    let firstname_containers = document.querySelector(".profile-dialog .first-name div");
+    firstname_containers.querySelector("h2").innerHTML=profile.first_name;
+    firstname_containers.querySelector("input").value=profile.first_name;
+
+    let lastname_containers = document.querySelector(".profile-dialog .last-name div");
+    lastname_containers.querySelector("h2").innerHTML=profile.last_name;
+    lastname_containers.querySelector("input").value=profile.last_name;
+
+    let number_containers = document.querySelector(".profile-dialog .number div");
+    number_containers.querySelector("p").innerHTML=profile.number;
+    show_dialog("profile-dialog");
+});
+
+
 
 
 
