@@ -21,7 +21,7 @@
 
     <div class="profile">
         <a href="./contacts.html"><i class="fa-solid fa-arrow-left"></i></a>
-        <div class="left"></div>
+        <div class="left" onclick="show_dialog('profile-dialog');"></div>
     </div>
 
 
@@ -32,6 +32,23 @@
         <textarea rows="3" name="message-body" placeholder="Type Message Here" required></textarea>
         <button type="submit" onclick="send_message();"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
+
+
+
+
+    <div class="dialog">
+
+        <div class="profile-dialog">
+            <span class="cancel" onclick="hide_dialog(this.parentElement);"><i class="fa-solid fa-xmark"></i></span>
+            <h1>Profile</h1>
+            <div class="img">
+                <img src="../res/user.png" alt="...">
+            </div>
+            <h2>Humaira Javed</h2>
+            <p>03499019007</p>
+        </div>
+
+    </div>
 
     
     <script src="../js/all.js"></script>

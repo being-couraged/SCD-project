@@ -1,6 +1,7 @@
 const {ipcRenderer} = require("electron");
 let sender_profile=null, 
 reciever_profile=null,
+images=[],
 chats_list=[];
 
 
@@ -28,15 +29,40 @@ const hide_loader = () => {
     let loader_elem=document.querySelector(".loader");
     loader_elem.style.display="none";
 }
+const show_dialog = (dialog_class) => {
+    let dialog = document.querySelector(`.dialog .${dialog_class}`);
+    dialog.style.display="flex";
+    dialog.parentElement.style.display="flex";
+}
+const hide_dialog = (dialog) => {
+    dialog.style.display="none";
+    dialog.parentElement.style.display="none";
+}
 const populate_profile = () => {
     if(!localStorage.getItem("reciever_profile")){
         window.location.replace("../html/contacts.html");
         return;
     }
     reciever_profile = JSON.parse(localStorage.getItem("reciever_profile"));
+    let url="../res/user.png";
+    if(reciever_profile.dp!==""){
+        for(i of images){
+            if(i.name===reciever_profile.dp && i.url!==""){
+                url=i.url;
+                break;
+            }
+        }
+    }
     let profile_elem=document.querySelector(".profile .left");
-    profile_elem.innerHTML=`<img src="../res/user.png" alt="...">
+    profile_elem.innerHTML=`<img src="${url}" alt="...">
                             <p class="name">${reciever_profile.first_name+" "+reciever_profile.last_name}</p>`;
+        
+    populate_profile_dialog(url);
+}
+const populate_profile_dialog = (url) => {
+    document.querySelector(".profile-dialog img").src=url;
+    document.querySelector(".profile-dialog h2").innerHTML=reciever_profile.first_name+" "+reciever_profile.last_name;
+    document.querySelector(".profile-dialog p").innerHTML=reciever_profile.number;
 }
 const populate_chats = () => {
     let messages_container=document.querySelector(".messages");
@@ -78,6 +104,12 @@ ipcRenderer.on("chats-fetch-result", (event, isError, profile, data) => {
         sender_profile=profile;
         seperate_data(data);
         hide_loader();
+        images.push({name: reciever_profile.dp, url: ""});
+        ipcRenderer.send("all-urls", images, "getting-images-for-first-time");
+        ipcRenderer.on("getting-images-for-first-time", (event, list) => {
+            images=list;
+            populate_profile();
+        });
     }
 });
 
@@ -138,6 +170,12 @@ ipcRenderer.on("live-change-detected", (event, _profile, data) => {
                 break;
             }
         }
+        images.push({name: reciever_profile.dp, url: ""});
+        ipcRenderer.send("all-urls", images, "getting-images-for-first-time");
+        ipcRenderer.on("getting-images-for-first-time", (event, list) => {
+            images=list;
+            populate_profile();
+        });
     }else{
         window.location.replace("../html/contacts.html");
     }

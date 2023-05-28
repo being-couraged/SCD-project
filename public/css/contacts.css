@@ -173,6 +173,7 @@ p, h1, h2, h3{
     width: 50px;
     height: 50px;
     border-radius: 100%;
+    object-fit: cover;
 }
 .profile .left p{
     font-size: 18px;
@@ -266,6 +267,7 @@ p, h1, h2, h3{
     width: 50px;
     height: 50px;
     border-radius: 100%;
+    object-fit: cover;
 }
 .contacts .contact span.counter{
     background-color: white;

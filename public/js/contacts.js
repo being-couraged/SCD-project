@@ -1,5 +1,6 @@
 const { ipcRenderer } = require("electron");
 let profile=null;
+let images = [];
 let all_users=[];
 
 
@@ -51,7 +52,15 @@ const hide_loader = () => {
 }
 const update_profile = () => {
     let profile_elem = document.querySelector(".profile .left");
-    profile_elem.innerHTML=`<img src="../res/user.png" alt="...">
+    let url="../res/user.png";
+    if(profile.dp!==""){
+        for(i of images){
+            if(profile.dp===i.name && i.url!==""){
+                url=i.url;
+            }
+        }
+    }
+    profile_elem.innerHTML=`<img src="${url}" alt="...">
                             <p class="name">${profile.first_name+" "+profile.last_name}</p>`;
 }
 const open_contact = (number) => {
@@ -142,7 +151,7 @@ const update_password = (dialog) => {
     }); 
 
 }
-const preview_image = (elem) => {
+const upload_image = (elem) => {
     show_loader();
     let image_elem = elem.querySelector("img"),
     file = elem.querySelector("input[name='dp-image']").files[0];
@@ -160,19 +169,26 @@ const preview_image = (elem) => {
         show_toast("Please Upload Image (PNG, JPG or JPEG) only", true);
         return;
     }
-    image_elem.src=window.URL.createObjectURL(file);
-    let name = "/"+Date.now();
+    let name = Date.now()+"."+file_ext;
+    if(profile.dp){
+        name=profile.dp;
+    }
     ipcRenderer.send("upload-image", name, `users/${profile.number}/dp`, file.path, "image_uploaded_info");
     ipcRenderer.on("image_uploaded_info", (event, res) => {
-        if(typeof(res) === typeof(true)){
-            hide_loader();
-            if(res)
-                show_toast("Uploaded Successfully");
-            else
+            if(res){
+                ipcRenderer.send("image-url", name, "image-url-after-upload");
+                ipcRenderer.on("image-url-after-upload", (event, object) => {
+                    hide_loader();
+                    if(object){
+                        document.querySelector(".profile-dialog .img img").src=object.url;
+                        show_toast("Uploaded Successfully");
+                    }
+                });
+            }else{
+                hide_loader();
                 show_toast("Cannot Uploaded. Try Again", true);
-        }else{
-            console.log(res);
-        }
+                image_elem.src=window.URL.createObjectURL(file);
+            }
     });
 }
 
@@ -180,9 +196,15 @@ const populate_users = () => {
     let contacts_elem = document.querySelector(".contacts");
     contacts_elem.innerHTML="";
     for(i of all_users){
+        let url = "../res/user.png";
+        for(j of images){
+            if(i.dp===j.name && j.url!==""){
+                url=j.url;
+            }
+        }
         contacts_elem.innerHTML+=`<a href="#" class="contact" onclick="open_contact('${i.number}');">
             <div class="left">
-                <img src="../res/user.png" alt="...">
+                <img src="${url}" alt="...">
                 <div>
                     <p>${i.first_name+" "+i.last_name}</p>
                     <p class="last-message">${i.number}</p>
@@ -209,8 +231,27 @@ ipcRenderer.on("first-fetch-result", (event, isError, _profile, data) => {
         profile=_profile;
         if(data){
             seperate_data(data);
+            update_profile();
         }
         hide_loader();
+        images=[];
+        if(profile.dp!=="") 
+            images.push({name: profile.dp, url: ""});
+        for(i of all_users){
+            if(i.dp!==""){
+                images.push({name: i.dp, url:""});
+            }
+        }
+        ipcRenderer.send("all-urls", images, "getting-all-urls-first-time");
+        ipcRenderer.on("getting-all-urls-first-time", (event, list) => {
+            if(typeof(list) === typeof(false)){
+                event.reply("Please refresh the app.", false);
+            }else{
+                images=list;
+                update_profile();
+                populate_users();
+            }
+        });
     }
 });
 
@@ -219,10 +260,16 @@ ipcRenderer.on("first-fetch-result", (event, isError, _profile, data) => {
 
 
 
-
-
 document.querySelector(".profile .left").addEventListener("click", (e) => {
-    document.querySelector(".profile-dialog .img img").src="../res/user.png";
+    if(profile.dp){
+        ipcRenderer.send("image-url", profile.dp, "populating-profile-dialog");
+        ipcRenderer.once("populating-profile-dialog", (event, object) => {
+            if(object)
+                document.querySelector(".profile-dialog .img img").src=object.url;
+        });
+    }else{
+        document.querySelector(".profile-dialog .img img").src="../res/user.png";
+    }
     
     let firstname_containers = document.querySelector(".profile-dialog .first-name div");
     firstname_containers.querySelector("h2").innerHTML=profile.first_name;
@@ -242,9 +289,6 @@ document.querySelector(".profile .left").addEventListener("click", (e) => {
 
 
 
-
-
-
 ipcRenderer.on("live-change-detected", (event, _profile, data) => {
     if(data && data['users']){
         profile=_profile;
@@ -253,6 +297,24 @@ ipcRenderer.on("live-change-detected", (event, _profile, data) => {
         }
         update_profile();
         seperate_data(data['users']);
+        images=[];
+        if(profile.dp!=="") 
+            images.push({name: profile.dp, url: ""});
+        for(i of all_users){
+            if(i.dp!==""){
+                images.push({name: i.dp, url: ""});
+            }
+        }
+        ipcRenderer.send("all-urls", images, "getting-all-urls");
+        ipcRenderer.on("getting-all-urls", (event, list) => {
+            if(typeof(list) === typeof(false)){
+                event.reply("Please refresh the app.", false);
+            }else{
+                images=list;
+                update_profile();
+                populate_users();
+            }
+        });
     }else{
         window.location.replace("../html/index.html");
     }

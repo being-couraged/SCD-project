@@ -1,9 +1,9 @@
+const { log } = require("console");
 const {BrowserWindow, app, ipcMain, screen, powerMonitor} = require("electron");
 const firebase = require("firebase/app");
-const fs = require("fs");
 const {getDatabase, ref, get, set, remove, onValue} = require("firebase/database");
-const {getStorage, uploadBytesResumable} = require("firebase/storage");
-const admin = require("firebase-admin");
+const storage = require("firebase/storage");
+const fs = require("fs");
 
 const firebaseConfig = {
     apiKey: "AIzaSyBid7q71uob_88zzI6mzb8AHhpNzgz7sXo",
@@ -14,7 +14,7 @@ const firebaseConfig = {
     messagingSenderId: "1093682295490",
     appId: "1:1093682295490:web:faaf7c5795734da26d015b",
     measurementId: "G-G6P4X6FJP7"
-  };
+};
 
 
 let window=null;
@@ -40,7 +40,7 @@ app.on("ready", mainWindow);
 
 let firebaseApp = firebase.initializeApp(firebaseConfig);
 let database = getDatabase(firebaseApp);
-let storage = getStorage(firebaseApp);
+let fileStorage = storage.getStorage(firebaseApp);
 let profile=null;
 
 
@@ -75,23 +75,35 @@ ipcMain.on("delete", (event, path, sendBackListener) => {
     }
 });
 ipcMain.on("upload-image", (event, img_name, path, file, sendBackListener) => {
-    let data = fs.readFileSync(file, "utf8");
-    let new_data = Uint8Array.from(data);
-    
-    event.reply(sendBackListener, false);
-    
-    // uploadBytesResumable(ref(storage, `${img_name}`), new_data).on("state_changed", (snaps) => {
-    //     let percentage = Math.floor((snaps.bytesTransferred/snaps.totalBytes)*100);
-    //     event.reply(sendBackListener, percentage);
-    // }, (error) => {
-    //     event.reply(sendBackListener, false);
-    // }, () => {
-    //     set(ref(database, path), img_name).then((res) => {
-    //         event.reply(sendBackListener, true);
-    //     }).catch((e) => {
-    //         event.reply(sendBackListener, false);
-    //     });
-    // });
+    let data = fs.readFileSync(file, "base64");
+    storage.uploadString(storage.ref(fileStorage, img_name), data, "base64", {contentType: "images/jpeg"}).then((res) => {        
+        set(ref(database, path), img_name).then((res) => {
+            event.reply(sendBackListener, true);
+        }).catch((e) => {
+            event.reply(sendBackListener, false);
+        });
+    }).catch((e) => {
+        event.reply(sendBackListener, false);
+    });
+});
+ipcMain.on("image-url", (event, name, sendBackListener) => {
+    storage.getDownloadURL(storage.ref(fileStorage, `${name}`)).then((url) => {
+        let obj = {name: name,
+                    url: url}
+        event.reply(sendBackListener, obj);
+    }).catch((err) => {
+        event.reply(sendBackListener, null);
+    });
+});
+ipcMain.on("all-urls", (event, images, sendBackListener) => {
+    for(let i=0; i<images.length; i++){
+        storage.getDownloadURL(storage.ref(fileStorage, `${images[i].name}`)).then((url) => {
+            images[i].url=url;
+            event.reply(sendBackListener, images);
+        }).catch((e) => {
+            event.reply(sendBackListener, false);
+        })
+    }
 });
 
 
