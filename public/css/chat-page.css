@@ -192,7 +192,7 @@ body{
 
 
 
-p, h1,h2,h3{
+h1,h2,h3{
     margin: 0;
     padding: 0;
 }
@@ -230,8 +230,37 @@ p, h1,h2,h3{
     border-radius: 10px;
     color: white;
 }
+.messages .message .file{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    text-decoration: none;
+}
+.messages .message .file img{
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+
+}
+.messages .message .file p{
+    font-size: 15px !important;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .messages .message p{
     width: 100%;
+    margin: 0;
+    padding: 0;
 }
 .messages .message p:last-child{
     text-align: right;
@@ -257,6 +286,7 @@ p, h1,h2,h3{
 
 
 .message-input{
+    position: relative;
     width: calc(100% - 20px);
     padding: 10px;
     height: 87px;
@@ -265,8 +295,56 @@ p, h1,h2,h3{
     align-items: flex-end;
     gap: 5px;
 }
-.message-input textarea{
+.message-input .preview{
+    position: absolute;
+    width: 200px;
+    height: auto;
+    max-height: 300px;
+    padding: 20px;
+    box-shadow: 2px 2px 20px 2px rgba(0, 0, 0, 0.3);
+    left: 10px;
+    top: 0;
+    transform: translateY(-105%);
+    border-radius: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+}
+.message-input .preview.show{
+    display: flex;
+}
+.message-input .preview span{
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    border-radius: 50%;
+    background-color: red;
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: white;
+    transition: 0.5s;
+    cursor: pointer;
+    z-index: 10;
+}
+.message-input .preview span:hover{
+    rotate: 180deg;
+}
+.message-input .preview img{
     width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.message-input .preview p{
+    overflow-wrap: break-word;
+}
+.message-input textarea{
+    width: calc(100% - 120px);
     min-height: 29px;
     max-height: 87px;
     padding: 10px;
@@ -288,6 +366,27 @@ p, h1,h2,h3{
 .message-input textarea::-webkit-scrollbar-thumb{
     background-color: rgb(200,140,0);
     border-radius: 10px;
+}
+.message-input .file{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+    transition: 0.3s;
+}
+.message-input .file input{
+    position: absolute;
+    scale: 5;
+    opacity: 0;
+    cursor: pointer;
+}
+.message-input .file span{
+    font-size: 25px;
+    rotate: 180deg;
 }
 .message-input button{
     width: 50px;

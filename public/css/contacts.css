@@ -247,10 +247,10 @@ p, h1, h2, h3{
     display: flex;
     gap: 10px;
     align-items: center;
-    width: calc(100% - 100px);
+    width: 100%;
 }
 .contacts .contact .left div{
-    width: 100%;
+    width: calc(100% - 50px);
     position: relative;
 }
 .contacts .contact .left div p{

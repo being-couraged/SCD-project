@@ -105,8 +105,31 @@ ipcMain.on("all-urls", (event, images, sendBackListener) => {
         })
     }
 });
-
-
+ipcMain.on("send-msg", (event, path, object, file_path, sendBackListener) => {
+    if(file_path!==""){
+        let file = fs.readFileSync(file_path, "base64");
+        storage.uploadString(storage.ref(fileStorage, `${object.id}`), file, "base64").then((val) => {
+            set(ref(database, path), object).then((val) => {
+                event.reply(sendBackListener, true);
+            }).catch((e) => {
+                event.reply(sendBackListener, false);
+            });
+        }).catch((e) => {
+            event.reply(sendBackListener, false);
+        });
+    }else{
+        set(ref(database, path), object).then((val) => {
+            event.reply(sendBackListener, true);
+        }).catch((e) => {
+            event.reply(sendBackListener, false);
+        });
+    }
+});
+ipcMain.on("download-file", (event, url, file_name, sendBackListener) => {
+    storage.getStream(storage.ref(fileStorage, url)).pipe(fs.createWriteStream(process.env.USERPROFILE+`/Downloads/${file_name}`)).on("close", () => {
+        event.reply(sendBackListener, true);
+    })
+})
 
 ipcMain.on("login", (event, credentials) => {
     get(ref(database, `users/${credentials.number}/`)).then((data) => {
@@ -154,16 +177,19 @@ ipcMain.on("logout", (event, data) => {
 
 
 
-onValue(ref(database, "/"), (data) => {
-    if(data && data['users']){
-        let user_data=data['users'];
-        for(i of Object.keys(user_data)){
-            if(user_data[i].number===profile.number){
-                profile=user_data[i];
-                break;
+onValue(ref(database, "/"), (snaps) => {
+    if(profile){
+        let data = snaps.val();
+        if(data){
+            let user_data=data['users'];
+            for(i of Object.keys(user_data)){
+                if(user_data[i].number===profile.number){
+                    profile=user_data[i];
+                    break;
+                }
             }
+            window.webContents.send("live-change-detected", profile, data);
         }
-        window.webContents.send("live-change-detected", profile, data.val());
     }
 });
 

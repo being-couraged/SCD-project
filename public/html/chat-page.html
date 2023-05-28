@@ -29,7 +29,16 @@
 
 
     <form class="message-input" method="post" action="#" onsubmit="return false;">
-        <textarea rows="3" name="message-body" placeholder="Type Message Here" required></textarea>
+        <div class="preview">
+            <span onclick="clear_files(this.parentElement.parentElement);"><i class="fa-solid fa-xmark"></i></span>
+            <img src="" alt="...">
+            <p>file-name</p>
+        </div>
+        <textarea rows="3" name="message-body" placeholder="Type Message Here"></textarea>
+        <div class="file">
+            <span><i class="fa-solid fa-paperclip"></i></span>
+            <input type="file" name="file-name" onchange="preview_image(event);">
+        </div>
         <button type="submit" onclick="send_message();"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
 

@@ -3,6 +3,8 @@ let sender_profile=null,
 reciever_profile=null,
 images=[],
 chats_list=[];
+let img_exts=['png','jpeg','jpg','gif'];
+let has_file=false;
 
 
 
@@ -71,10 +73,30 @@ const populate_chats = () => {
         let side="left";
         if(i.sender===sender_profile.number)
             side="right";
-        messages_container.innerHTML+=`<div class="message ${side}">
-            <p class="body">${i.body}</p>
+        let data=`<div class="message ${side}" id="${i.id}">`;
+        if(i.file_name && i.file_name!==""){
+            let url="";
+            for(j of images){
+                if(j.name===i.id){
+                    url=j.url;
+                }
+            }
+            let preview="../res/file-preview.png";
+            for(j of img_exts){
+                if(j.toLowerCase()===i.file_name.split(".").pop().toLowerCase()){
+                    preview=url;
+                    break;
+                }
+            }
+            data+=`<div class="file" onclick="download_file('${url}', '${i.file_name}');">
+                <img src="${preview}" alt="...">
+                <p>${i.file_name}</p>            
+            </div>`;
+        }    
+        data+=`<p class="body">${i.body}</p>
             <p class="time">${i.time}</p>
         </div>`;
+        messages_container.innerHTML+=data;
     }
     if(document.querySelector(".messages .message:last-child"))
         document.querySelector(".messages .message:last-child").scrollIntoView();
@@ -90,37 +112,26 @@ const seperate_data = (data) => {
     }
     populate_chats();
 }
-
-
-
-show_loader();
-populate_profile();
-ipcRenderer.send("fetch", "chats/", "chats-fetch-result");
-ipcRenderer.on("chats-fetch-result", (event, isError, profile, data) => {
-    if(isError){
-        hide_loader();
-        show_toast("Network Error", true);
-    }else{
-        sender_profile=profile;
-        seperate_data(data);
-        hide_loader();
-        images.push({name: reciever_profile.dp, url: ""});
-        ipcRenderer.send("all-urls", images, "getting-images-for-first-time");
-        ipcRenderer.on("getting-images-for-first-time", (event, list) => {
-            images=list;
-            populate_profile();
-        });
+const separate_images = () => {
+    for(i of chats_list){
+        if(i.file_name && i.file_name!==""){
+            images.push({name: i.id, url:""});
+        }
     }
-});
-
-
-
-
-
+}
 const send_message = () => {
     let message_inp = document.querySelector("textarea[name='message-body']");
-
+    if(!has_file && message_inp.value===""){
+        return;
+    }
+    document.querySelector(".message-input .preview").classList.remove("show");
     let message = {};
+    let file_path="";
+    if(has_file){
+        let file = document.querySelector(".message-input input[name='file-name']").files[0];
+        message.file_name=file.name;
+        file_path=file.path;
+    }
     message.body=message_inp.value;
     message.sender=sender_profile.number;
     message.reciever=reciever_profile.number;
@@ -141,15 +152,74 @@ const send_message = () => {
 
     message_inp.value="";
 
-    ipcRenderer.send("insert", `chats/${message.id}/`, message, "message_sent");
+    ipcRenderer.send("send-msg", `chats/${message.id}/`, message, file_path, "message_sent");
     ipcRenderer.on("message_sent", (event, res) => {
         if(res){
 
         }else{
             show_toast("message not sent", true);
         }
+    });
+}
+const preview_image = (e) => {
+    let url = "../res/file-preview.png";
+    if(e.target.files[0]){
+        has_file=true;
+    }else{
+        return;
+    }
+    document.querySelector(".message-input .preview").classList.add("show");
+    let ext=e.target.files[0].name.split(".").pop();
+    for(i of img_exts){
+        if(i.toLowerCase()===ext.toLowerCase()){
+            url = URL.createObjectURL(e.target.files[0]);
+            break;
+        }
+    }
+    document.querySelector(".message-input .preview img").src=url;
+    document.querySelector(".message-input .preview p").innerHTML=e.target.files[0].name;
+};
+const clear_files = (elem) => {
+    document.querySelector(".message-input .preview").classList.remove("show");
+    has_file=false;
+}
+const download_file = (url, file_name) => {
+    if(url===""){
+        show_toast("Still loading, please wait", true);
+        return;
+    }
+    show_loader();
+    ipcRenderer.send("download-file", url, file_name, "get-res");
+    ipcRenderer.on("get-res", (event, res) => {
+        hide_loader();
+        show_toast("File downloaded to downloads directory");
     })
 }
+
+
+
+show_loader();
+populate_profile();
+ipcRenderer.send("fetch", "chats/", "chats-fetch-result");
+ipcRenderer.on("chats-fetch-result", (event, isError, profile, data) => {
+    if(isError){
+        hide_loader();
+        show_toast("Network Error", true);
+    }else{
+        sender_profile=profile;
+        seperate_data(data);
+        hide_loader();
+        images=[];
+        images.push({name: reciever_profile.dp, url: ""});
+        separate_images();
+        ipcRenderer.send("all-urls", images, "getting-images-for-first-time");
+        ipcRenderer.on("getting-images-for-first-time", (event, list) => {
+            images=list;
+            populate_profile();
+            populate_chats();
+        });
+    }
+});
 
 
 
@@ -170,11 +240,14 @@ ipcRenderer.on("live-change-detected", (event, _profile, data) => {
                 break;
             }
         }
+        images=[];
         images.push({name: reciever_profile.dp, url: ""});
-        ipcRenderer.send("all-urls", images, "getting-images-for-first-time");
-        ipcRenderer.on("getting-images-for-first-time", (event, list) => {
+        separate_images();
+        ipcRenderer.send("all-urls", images, "getting-images-every-load");
+        ipcRenderer.on("getting-images-every-load", (event, list) => {
             images=list;
             populate_profile();
+            populate_chats();
         });
     }else{
         window.location.replace("../html/contacts.html");
